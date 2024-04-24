@@ -14,7 +14,7 @@ def vigenere_sifreleme(şifre_metni, anahtar):
             sifrelenmis_indis = (karakter_indisi + anahtar_karakter_indisi) % len(alfabe)
            
             sifrelenmis_metin += alfabe[sifrelenmis_indis]
-            
+            # Anahtar kelimesinin sonraki karakterine geçiyoruz.
             anahtar_indisi = (anahtar_indisi + 1) % len(anahtar)
         else:
             # Eğer karakter alfabede bulunmuyorsa, aynı şekilde eklenir(dolgu karakteri gibi)
