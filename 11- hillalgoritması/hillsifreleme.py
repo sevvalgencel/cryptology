@@ -38,7 +38,7 @@ def main():
 
     # Matris uygun bir şekilde oluşturulamazsa programı sonlandır
     if anahtar_matrisi is None:
-        print("Uygun bir matris oluşturulamadı. Program sonlandırılıyor.")
+        print("Uygun bir matris oluşturulamadı.")
         return
 
     print("Oluşturulan matris:")
