@@ -22,7 +22,6 @@ def hill_sifreleme(mesaj, K):
 
     for harf in mesaj:
         mesaj_numaraları.append(harften_indexe[harf])
-
     blok = [
         mesaj_numaraları[i : i + int(K.shape[0])]
         for i in range(0, len(mesaj_numaraları), int(K.shape[0]))

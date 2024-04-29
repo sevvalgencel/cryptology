@@ -22,10 +22,10 @@ def hill_cozucu(sifre, Kinv):
 
     for harf in sifre:
         sifre_numaraları.append( harften_indexe[harf])
-
+#blok oluşturma
     blok = [
         sifre_numaraları[i : i + int(Kinv.shape[0])]
-        for i in range(0, len(sifre_numaraları), int(Kinv.shape[0]))
+        for i in range(0, len(sifre_numaraları), int(Kinv.shape[0])) 
     ]
 
     for C in blok:
