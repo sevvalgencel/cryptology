@@ -1,69 +1,50 @@
 import numpy as np
-from egcd import egcd  # pip install egcd
+
 
 alfabe = "abcçdefgğhıijklmnoöprsştuüvyz"
 
-harften_indexe = dict(zip(alfabe, range(len(alfabe))))
-indexten_harfe = dict(zip(range(len(alfabe)), alfabe))
 
+harf_to_index = {harf: idx for idx, harf in enumerate(alfabe)}
+index_to_harf = {idx: harf for idx, harf in enumerate(alfabe)}
 
-def matrix_mod_tersi(matrix, modulus):
-    det = int(np.round(np.linalg.det(matrix)))
-    det_inv = egcd(det, modulus)[1] % modulus
-    matrix_modulus_inv = (
-        det_inv * np.round(det * np.linalg.inv(matrix)).astype(int) % modulus
-    )
-    return matrix_modulus_inv
+# Kullanıcıdan matris girişi alma
+def matris_girisi():
+    boyut = int(input("Matris boyutunu girin (örneğin, 2x2 için 2 girin): "))
+    matris = []
+    print(f"Lütfen {boyut}x{boyut} matris değerlerini girin (sadece sayılar):")
+    for i in range(boyut):
+        satir = list(map(int, input(f"{i+1}. satırı girin: ").split()))
+        matris.append(satir)
+    return np.array(matris)
 
+# Metni şifrelemek için Hill algoritması
+def hill_sifreleme(metin, matris):
+    boyut = matris.shape[0]
+    # Metni uygun uzunlukta bloklara böl
+    while len(metin) % boyut != 0:
+        metin += 'x'  # Boşluğu 'x' ile dolduruyoruz (veya başka bir harf seçilebilir)
+    
+    # Metni harf indekslerine çevir
+    metin_indices = [harf_to_index[harf] for harf in metin]
+    
+    # Blokları oluştur ve şifrele
+    sifreli_metin = ""
+    for i in range(0, len(metin_indices), boyut):
+        blok = metin_indices[i:i+boyut]
+        blok = np.array(blok)
+        sifreli_blok = np.dot(matris, blok) % len(alfabe)
+        sifreli_metin += ''.join(index_to_harf[idx] for idx in sifreli_blok)
+    
+    return sifreli_metin
 
-def hill_sifreleme(mesaj, K):
-    sifrelenmis_metin = ""
-    mesaj_numaraları = []
-
-    for harf in mesaj:
-        mesaj_numaraları.append(harften_indexe[harf])
-    blok = [
-        mesaj_numaraları[i : i + int(K.shape[0])]
-        for i in range(0, len(mesaj_numaraları), int(K.shape[0]))
-    ]
-
-    for P in blok:
-        P = np.transpose(np.asarray(P))[:, np.newaxis]
-
-        while P.shape[0] != K.shape[0]:
-            P = np.append(P, harften_indexe[" "])[:, np.newaxis]
-
-        numaralar = np.dot(K, P) % len(alfabe)
-        n = numaralar.shape[0]
-
-        for idx in range(n):
-            number = int(numaralar[idx, 0])
-            sifrelenmis_metin += indexten_harfe[number]
-
-    return sifrelenmis_metin
-
-
-
+# Kullanıcıdan metin girişi al
 def main():
-        mesaj = input("Şifrelenecek metni girin: ").lower()
-        # Matris girişini al
-        print("3x3 matrisin elemanlarını girin:")
-        K = []
-        for i in range(3):
-            row = []
-            for j in range(3):
-                elem = int(input(f"Matrisin {i+1}.{j+1}. elemanını giriniz: "))
-                row.append(elem)
-            K.append(row)
-        K = np.array(K)
+    metin = input("Şifrelenecek metni girin: ").lower()
+    # Boşlukları yok say
+    metin = metin.replace(' ', '')
+    matris = matris_girisi()
+    sifreli_metin = hill_sifreleme(metin, matris)
+    print("Şifreli metin:", sifreli_metin)
 
-        # Matrisin tersini al
-        K_ters = matrix_mod_tersi(K, len(alfabe))
-
-        şifreli_mesaj = hill_sifreleme(mesaj, K)
-        
-
-        print("Orijinal mesaj: " + mesaj)
-        print("Şifreli mesaj:  " + şifreli_mesaj)
-
-main()
+if __name__ == "__main__":
+    main()
